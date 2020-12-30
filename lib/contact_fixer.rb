@@ -20,6 +20,14 @@ class ContactFixer
       else
         @output.puts "- " + phone_numbers.map { |phone_number| phone_number.value }.inspect
       end
+      emails = person.email_addresses
+      if emails.nil?
+        @output.puts "No emails found for connection"
+      else
+        @output.puts "- " + emails.map { |email| email.value }.inspect
+      end
+      # newline is always good
+      @output.puts ""
     end
   end
 
@@ -27,7 +35,7 @@ class ContactFixer
     @contacts_api.list_person_connections(
       "people/me",
     #  page_size:     10, # not used as I need all of the contacts
-      person_fields: "names,phoneNumbers"
+      person_fields: "names,phoneNumbers,emailAddresses"
     )
   end
 
