@@ -50,6 +50,17 @@ class ContactFixer
     end
   end
 
+  def update_connections_phone_numbers(connections, raw_regex, substitute_pattern)
+    regex = Regexp.new raw_regex
+    @output.puts "No connections found" if connections.empty?
+    connections.each do |person|
+      phone_numbers = person.phone_numbers
+      unless phone_numbers.nil?
+        phone_numbers.each{|phone_number| phone_number.value.gsub!(regex, substitute_pattern)}
+      end
+    end
+  end
+
   def get_contacts_by_phone_filter(contacts, raw_filter)
     filter = Regexp.new raw_filter
     @output.puts "No connections found" if contacts.connections.empty?
@@ -61,14 +72,6 @@ class ContactFixer
       else
         phone_numbers.any? { |phone_number| phone_number.value.match(filter) }
       end
-      emails = person.email_addresses
-      if emails.nil?
-        @output.puts "No emails found for connection"
-      else
-        @output.puts "- " + emails.map { |email| email.value }.inspect
-      end
-      # newline is always good
-      @output.puts ""
     end
   end
 
