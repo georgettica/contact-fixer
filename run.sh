@@ -2,7 +2,7 @@
 
 # Choose running machine name
 unameOut="$(uname -s)"
-case "${unameOut}" in
+case "$(uname -s)" in
     Linux*)     machine=Linux;;
     Darwin*)    machine=Mac;;
     CYGWIN*)    machine=Cygwin;;
