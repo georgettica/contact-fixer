@@ -1,13 +1,12 @@
 #!/bin/bash
 
 # Choose running machine name
-unameOut="$(uname -s)"
 case "$(uname -s)" in
     Linux*)     machine=Linux;;
     Darwin*)    machine=Mac;;
     CYGWIN*)    machine=Cygwin;;
     MINGW*)     machine=MinGw;;
-    *)          machine="UNKNOWN:${unameOut}"
+    *)          machine="UNKNOWN:$(uname -s)"
 esac
 
 # Mount repository path
