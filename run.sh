@@ -15,6 +15,6 @@ if [ $machine == "Linux" ]
 then
 	docker run --rm -it -v $(pwd):/app-dir/local -w /app-dir/local contacts-fixer sh
 else
-	windows_path=$(pwd | sed 's/^\///' | sed 's/\//\\/g' | sed 's/^./\0:/')
+	windows_path=$(pwd | sed -e 's/^\///' -e 's/\//\\/g' -e 's/^./\0:/')
 	docker run --rm -it -v $windows_path:/app-dir/local contacts-fixer sh
 fi
