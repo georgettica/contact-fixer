@@ -16,5 +16,5 @@ then
 	docker run --rm -it -v $(pwd):/app-dir/local -w /app-dir/local contacts-fixer sh
 else
 	windows_path=$(pwd | sed 's/^\///' | sed 's/\//\\/g' | sed 's/^./\0:/')
-	winpty docker run --rm -it -v $windows_path:/app-dir/local contacts-fixer sh
+	docker run --rm -it -v $windows_path:/app-dir/local contacts-fixer sh
 fi
