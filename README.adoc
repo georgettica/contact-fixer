@@ -6,6 +6,13 @@ This repo is supposed to enable the user (you) to find and fix google contact nu
 To run this correctly, you need to enter https://developers.google.com/people/quickstart/ruby and save the credentails file as `./secrets/credentials.json`
 [.line-through]#the file is not saved and is in gitignore :)#
 
+== Roadmap
+* [*] Pull all contacts
+* [*] Parse contacts for relevant info
+* [ ] Filter numbers based on regex
+* [ ] Replace numbers filtered based on another regex (roughly like `sed`)
+* [ ] Apply changes to contacts
+
 == Build
 to build execute the `./build.sh` script
 
