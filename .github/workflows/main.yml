@@ -1,0 +1,13 @@
+on: [push]
+
+name: README asciidoctior verification
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    # Include asciidoctor-action and run the cli tool
+    - uses: mgred/asciidoctor-action@master
+      with:
+        args: asciidoctor README.adoc# This is a basic workflow to help you get started with Actions
