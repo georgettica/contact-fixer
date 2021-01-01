@@ -12,7 +12,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     # Include asciidoctor-action and run the cli tool
-    - run: docker run -it -v contact-fixer asciidoctor/docker-asciidoctor
     - uses: mgred/asciidoctor-action@master
       with:
         args: asciidoctor README.adoc
