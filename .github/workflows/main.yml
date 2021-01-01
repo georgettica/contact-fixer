@@ -4,12 +4,16 @@ on:
   pull_request:
     branches: [ main ]
 
+name: README asciidoctior verification
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
     # Include asciidoctor-action and run the cli tool
+      with:
+        args: docker run -it -v contact-fixer asciidoctor/docker-asciidoctor
     - uses: mgred/asciidoctor-action@master
       with:
         args: asciidoctor README.adoc
