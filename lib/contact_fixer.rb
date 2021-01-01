@@ -4,6 +4,18 @@ class ContactFixer
     @output = output
   end
 
+  def is_non_roman(str)
+    str =~ /[^\w\s!..]/
+  end
+
+  def get_fixed_display_name(display_name)
+    if is_non_roman(display_name)
+	    display_name.reverse
+	  else
+	    display_name
+	  end
+  end
+
   def print_connections(response)
     @output.puts "Connection names:"
     @output.puts "No connections found" if response.connections.empty?
@@ -12,7 +24,7 @@ class ContactFixer
       if names.nil?
         @output.puts "No names found for connection"
       else
-        @output.puts names.map { |name| name.display_name }.inspect
+        @output.puts names.map { |name| get_fixed_display_name(name.display_name) }.inspect
       end
       phone_numbers = person.phone_numbers
       if phone_numbers.nil?
