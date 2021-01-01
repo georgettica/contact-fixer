@@ -10,8 +10,8 @@ To run this correctly, you need to enter https://developers.google.com/people/qu
 * [*] Pull all contacts
 * [*] Parse contacts for relevant info
 * [ ] Filter numbers based on  a user-provided regex
-* [ ] Replace numbers filtered based on another user-provided regex (roughly like `sed`)
-* [ ] Apply changes to contacts
+* [ ] Replace numbers locally filtered based on another user-provided regex (roughly like `sed`)
+* [ ] Apply changes via the API
 
 == Build
 to build execute the `./build.sh` script
