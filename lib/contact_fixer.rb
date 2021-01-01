@@ -10,10 +10,10 @@ class ContactFixer
 
   def get_fixed_display_name(display_name)
     if is_non_roman(display_name)
-	    display_name.reverse
-	  else
-	    display_name
-	  end
+      display_name.reverse
+    else
+      display_name
+    end
   end
 
   def print_connections(response)
