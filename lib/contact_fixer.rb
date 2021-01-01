@@ -4,6 +4,9 @@ class ContactFixer
     @output = output
   end
 
+  # Added the method from the following discussion: https://www.ruby-forum.com/t/how-to-detect-if-a-string-contains-any-funny-characters-from-non-english-alphabets/143811/2
+  # The method checks if the given string contains a non "Roman Alphabet" (A-Z) letters by iterating the string
+  # and returning a positive result for the first letter that does not match the given regular expression.
   def self.is_non_roman(str)
     str =~ /[^\w\s!..]/
   end
