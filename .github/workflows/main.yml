@@ -4,7 +4,7 @@ on:
   pull_request:
     branches: [ main ]
 
-name: README asciidoctior verification
+name: README.adoc asciidoctior verification
 
 jobs:
   build:
