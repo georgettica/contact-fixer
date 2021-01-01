@@ -4,8 +4,6 @@ on:
   pull_request:
     branches: [ main ]
 
-name: README asciidoctior verification
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -14,4 +12,4 @@ jobs:
     # Include asciidoctor-action and run the cli tool
     - uses: mgred/asciidoctor-action@master
       with:
-        args: "asciidoctior README.adoc"
+        args: asciidoctior README.adoc
