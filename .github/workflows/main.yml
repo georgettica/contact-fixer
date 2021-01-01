@@ -12,4 +12,4 @@ jobs:
     # Include asciidoctor-action and run the cli tool
     - uses: mgred/asciidoctor-action@master
       with:
-        args: asciidoctior README.adoc
+        args: asciidoctor README.adoc
