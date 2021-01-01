@@ -4,7 +4,7 @@ on:
   pull_request:
     branches: [ main ]
 
-name: README.adoc asciidoctior verification
+name: README asciidoctior verification
 
 jobs:
   build:
@@ -14,4 +14,4 @@ jobs:
     # Include asciidoctor-action and run the cli tool
     - uses: mgred/asciidoctor-action@master
       with:
-        args: asciidoctor README.adoc
+        args: README.adoc
