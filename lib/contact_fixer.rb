@@ -4,12 +4,12 @@ class ContactFixer
     @output = output
   end
 
-  def is_non_roman(str)
+  def self.is_non_roman(str)
     str =~ /[^\w\s!..]/
   end
 
   def get_fixed_display_name(display_name)
-    if is_non_roman(display_name)
+    if ContactFixer.is_non_roman(display_name)
       display_name.reverse
     else
       display_name
