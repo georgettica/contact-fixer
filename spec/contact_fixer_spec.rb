@@ -26,7 +26,7 @@ describe ContactFixer do
           expect(@cf.get_all_contacts).to eq([person])
         end
       end
-	end
+    end
   end
   describe '.print_connections' do
     context 'he has only an email address' do
@@ -43,7 +43,7 @@ describe ContactFixer do
         expect(@out.string).to include(expected_email)
       end
     end
-	context 'he has only a phone number' do
+    context 'he has only a phone number' do
       it 'prints the user with the phone number' do
         # Arrange
         expected_phone_number = "+9721234567"
