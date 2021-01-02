@@ -1,6 +1,8 @@
 require 'contact_fixer'
 require 'stringio'
 require 'google/apis/people_v1'
+require 'simplecov'
+SimpleCov.start 'rails'
 
 describe ContactFixer do
   before(:each) do
