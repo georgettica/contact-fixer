@@ -12,6 +12,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     # Include asciidoctor-action and run the cli tool
-    - uses: mgred/asciidoctor-action@master
+    - uses: CVMsnc/asciidoctor-action@master
       with:
-        args: /usr/bin/asciidoctor README.adoc
+        args: asciidoctor README.adoc
