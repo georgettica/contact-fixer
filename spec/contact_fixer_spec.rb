@@ -42,4 +42,33 @@ describe ContactFixer do
       end
     end
   end
+
+  describe '.get_contacts_by_phone_filter' do
+    before(:each) do
+      @cf = ContactFixer.new(nil, @out)
+    end
+    context 'no contacts exist' do
+      it 'should print an empty result' do
+       fake_connections = instance_double('Connections', :connections => [])
+       expect(@cf.get_contacts_by_phone_filter(fake_connections,'')).to eq([])
+      end
+    end
+    context 'contact exists and has no phone numbers' do
+      it 'should print an empty result' do
+       fake_person = instance_double('Person', :phone_numbers => [])
+       fake_connections = instance_double('Connections', :connections => [fake_person])
+       expect(@cf.get_contacts_by_phone_filter(fake_connections,'')).to eq([])
+      end
+    end
+    context 'contact exists with number and filter is empty' do
+      it 'should print an empty result' do
+       expected_number = "a@a.com"
+       fake_number = instance_double("PhoneNumber")
+       allow(fake_number).to receive(:value).and_return(expected_number)
+       fake_person = instance_double('Person', :phone_numbers => [fake_number])
+       fake_connections = instance_double('Connections', :connections => [fake_person])
+       expect(@cf.get_contacts_by_phone_filter(fake_connections,'')).to eq([])
+      end
+    end
+  end
 end

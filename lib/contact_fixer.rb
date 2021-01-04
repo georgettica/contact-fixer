@@ -50,6 +50,20 @@ class ContactFixer
     end
   end
 
+  def get_contacts_by_phone_filter(contacts, raw_filter)
+    filter = Regexp.new raw_filter
+    @output.puts "No connections found" if contacts.connections.empty?
+    contacts.connections.select do |person|
+      phone_numbers = person.phone_numbers
+
+      if phone_numbers.nil?
+        false
+      else
+        phone_numbers.any? { |phone_number| phone_number.value[filter].nil? }
+      end
+    end
+  end
+
   def get_all_contacts
     @contacts_api.list_person_connections(
       "people/me",

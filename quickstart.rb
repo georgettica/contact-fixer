@@ -1,10 +1,15 @@
 # pulled from https://developers.google.com/people/quickstart/ruby
 # modified a bit to run my code and be 
 
+
+require 'highline'
+
 require "fileutils"
+
 require "google/apis/people_v1"
 require "googleauth"
 require "googleauth/stores/file_token_store"
+
 require_relative 'lib/contact_fixer'
 
 OOB_URI = "urn:ietf:wg:oauth:2.0:oob".freeze
@@ -53,4 +58,14 @@ def init_service
 end
 
 contact_fixer = ContactFixer.new(init_service, $stdout)
-contact_fixer.print_connections(contact_fixer.get_all_contacts)
+all_contacts = contact_fixer.get_all_contacts
+cli = HighLine.new
+
+
+first_filter = cli.ask("What filter do you want ot run?  ") { |q| q.default = ".*" }
+
+output = contact_fixer.get_contacts_by_phone_filter(all_contacts, first_filter)
+
+output.each do |contact|
+  contact_fixer.print_connection(contact)
+end
