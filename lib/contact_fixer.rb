@@ -59,7 +59,7 @@ class ContactFixer
       if phone_numbers.nil?
         false
       else
-        phone_numbers.any? { |phone_number| phone_number.value[filter].nil? }
+        phone_numbers.any? { |phone_number| phone_number.value.match(filter) }
       end
     end
   end
