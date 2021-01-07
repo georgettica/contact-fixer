@@ -62,7 +62,7 @@ all_contacts = contact_fixer.get_all_contacts
 cli = HighLine.new
 
 
-first_filter = cli.ask("What filter do you want ot run?  ") { |q| q.default =  "\\+.*" }
+first_filter = cli.ask("What filter do you want ot run?  ") { |q| q.default = "[\+|0-9][0-9|\s|\\-|a-z|A-Z]*" }
 
 output = contact_fixer.get_contacts_by_phone_filter(all_contacts, first_filter)
 
