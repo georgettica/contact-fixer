@@ -21,7 +21,7 @@ class ContactFixer
     end
   end
 
-  def print_connection_phone_numbers(person, raw_filter)
+  def print_connection_phone_numbers(phone_numbers, raw_filter)
     if raw_filter.nil?
       @output.puts "- " + phone_numbers.map { |phone_number| phone_number.value }.inspect
     else
