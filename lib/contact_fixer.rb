@@ -41,7 +41,7 @@ class ContactFixer
     if phone_numbers.nil?
       @output.puts "No numbers found for connection"
     else
-      print_connection_phone_numbers(person, raw_filter)
+      print_connection_phone_numbers(phone_numbers, raw_filter)
     end
     emails = person.email_addresses
     if emails.nil?
