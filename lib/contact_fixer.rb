@@ -22,10 +22,10 @@ class ContactFixer
   end
 
   def print_connection_phone_numbers(person, raw_filter)
-    filter = Regexp.new raw_filter
     if raw_filter.nil?
       @output.puts "- " + phone_numbers.map { |phone_number| phone_number.value }.inspect
     else
+      filter = Regexp.new raw_filter
       @output.puts "- " + phone_numbers.map { |phone_number| phone_number.value }.inspect.gsub(filter) {|number| number.green}
     end
   end
