@@ -45,21 +45,21 @@ describe ContactFixer do
 
   describe '.get_contacts_by_phone_filter' do
     before(:each) do
-      @contact_number = "976-shoe"
-      @fake_number = instance_double("PhoneNumber")
+	  @contact_number = "976-shoe"
+	  @fake_number = instance_double("PhoneNumber")
       @cf = ContactFixer.new(nil, @out)
     end
     context 'no contacts exist' do
       it 'should print an empty result' do
        fake_connections = instance_double('Connections', :connections => [])
-       expect(@cf.get_contacts_by_phone_filter(fake_connections,'')).to eq([])
+       expect(@cf.get_contacts_by_phone_filter(fake_connections, '')).to eq([])
       end
     end
     context 'contact exists and has no phone numbers' do
       it 'should print an empty result' do
        fake_person = instance_double('Person', :phone_numbers => [])
        fake_connections = instance_double('Connections', :connections => [fake_person])
-       expect(@cf.get_contacts_by_phone_filter(fake_connections,'')).to eq([])
+       expect(@cf.get_contacts_by_phone_filter(fake_connections, '')).to eq([])
       end
     end
     context 'contact exists with number and filter is empty' do
@@ -67,14 +67,23 @@ describe ContactFixer do
        allow(@fake_number).to receive(:value).and_return(@contact_number)
        fake_person = instance_double('Person', :phone_numbers => [@fake_number])
        fake_connections = instance_double('Connections', :connections => [fake_person])
-       # Checks if the result does not contain characters between the start and the end of the line:
-       # 1) '^' represents the beginning of the line and '$' represents the end of the line.
-       # 2) .{0} represents a zero-length string - the '.' symbolize the characters that can appear in the string.
-       # (every character except \n) and {d} defines the size of the string (size(str) = d).
-       # 
-       # This information is from the following guide: https://www.rubyguides.com/2015/06/ruby-regex/
-       # under the sections 'Ranges', 'Modifiers' and 'Exact String Matching'.
-       expect(@cf.get_contacts_by_phone_filter(fake_connections,"^.{0}$")).to eq([])
+       expect(@cf.get_contacts_by_phone_filter(fake_connections, '^.{0}$')).to eq([])
+      end
+    end
+	context 'contact exists with number and filter matches' do
+      it 'should print the contact details' do
+       allow(@fake_number).to receive(:value).and_return(@contact_number)
+       fake_person = instance_double('Person', :phone_numbers => [@fake_number])
+       fake_connections = instance_double('Connections', :connections => [fake_person])
+       expect(@cf.get_contacts_by_phone_filter(fake_connections, '976')).to eq([fake_person])
+      end
+    end
+	context 'contact exists with number and filter is invalid' do
+      it 'should raise a regex expression error' do
+       allow(@fake_number).to receive(:value).and_return(@contact_number)
+       fake_person = instance_double('Person', :phone_numbers => [@fake_number])
+       fake_connections = instance_double('Connections', :connections => [fake_person])
+	   expect { @cf.get_contacts_by_phone_filter(fake_connections, '*') }.to raise_error(RegexpError)
       end
     end
   end
