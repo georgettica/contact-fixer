@@ -53,11 +53,11 @@ class ContactFixer
     @output.puts ""
   end
 
-  def print_connections(response)
+  def print_connections(response, raw_filter = nil)
     @output.puts "Connection names:"
     @output.puts "No connections found" if response.connections.empty?
     response.connections.each do |person|
-      print_connection(person)
+      print_connection(person, raw_filter)
     end
   end
 
