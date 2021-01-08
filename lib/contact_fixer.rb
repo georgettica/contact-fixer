@@ -63,7 +63,7 @@ class ContactFixer
 
   def update_connections_phone_numbers(connections, raw_regex, substitute_pattern)
     regex = Regexp.new raw_regex
-    @output.puts "No connections found" if contacts.connections.empty?
+    @output.puts "No connections found" if connections.empty?
     connections.each do |person|
       phone_numbers = person.phone_numbers
       unless phone_numbers.nil?
