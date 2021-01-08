@@ -84,16 +84,18 @@ describe ContactFixer do
        expect(@cf.get_contacts_by_phone_filter(fake_connections, "^.{0}$")).to eq([])
       end
     end
-	context 'contact exists with number and filter matches' do
+    context 'contact exists with number and filter matches' do
       it 'should print the contact details' do
+       # Arrange
        allow(@fake_number).to receive(:value).and_return(@contact_number)
        fake_person = instance_double('Person', :phone_numbers => [@fake_number])
        fake_connections = instance_double('Connections', :connections => [fake_person])
        expect(@cf.get_contacts_by_phone_filter(fake_connections, '976')).to eq([fake_person])
       end
     end
-	context 'contact exists with number and filter is invalid' do
+    context 'contact exists with number and filter is invalid' do
       it 'should raise a regex expression error' do
+       # Arrange
        allow(@fake_number).to receive(:value).and_return(@contact_number)
        fake_person = instance_double('Person', :phone_numbers => [@fake_number])
        fake_connections = instance_double('Connections', :connections => [fake_person])
@@ -160,33 +162,42 @@ describe ContactFixer do
     end
     context 'no contacts exist' do
       it 'should return an empty collection' do
+        # Arrange
         connections = []
+        # Act and assert
         expect(@cf.update_connections_phone_numbers(connections, '', @replacement_pattern)).to eq([])
       end
     end
     context 'contact exists and has no phone numbers' do
       it 'should return the given connections collection' do
+        # Arrange
         fake_person = instance_double('Person', :phone_numbers => [])
         connections = [fake_person]
+        # Act and assert
         expect(@cf.update_connections_phone_numbers(connections, '', @replacement_pattern)).to eq(connections)
       end
     end
     context 'contact exists with number and filter is invalid' do
       it 'should raise a regex expression error' do
+        # Arrange
         allow(@fake_number).to receive(:value).and_return(@contact_number)
         fake_person = instance_double('Person', :phone_numbers => [@fake_number])
         connections = [fake_person]
+        # Act and assert
         expect { @cf.update_connections_phone_numbers(connections, '*', @replacement_pattern) }.to raise_error(RegexpError)
       end
     end
     context 'contact exists with number and filter matches' do
       it 'should return the contact with the updated number' do
+        # Arrange
         expected_number = "0118-999-881-999-119-725-123"
         expect(@fake_number).to receive(:value).and_return(@contact_number, expected_number)
         allow(@fake_number).to receive(:value=).with(expected_number)
         fake_person = instance_double('Person', :phone_numbers => [@fake_number], :names => [], :email_addresses => [])
         connections = [fake_person]
+        # Act
         @cf.update_connections_phone_numbers(connections, '3$', @replacement_pattern)
+        # Assert
         @cf.print_connection(fake_person)
         expect(@out.string).to include(expected_number)
       end
