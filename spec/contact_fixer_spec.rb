@@ -67,7 +67,14 @@ describe ContactFixer do
        allow(fake_number).to receive(:value).and_return(expected_number)
        fake_person = instance_double('Person', :phone_numbers => [fake_number])
        fake_connections = instance_double('Connections', :connections => [fake_person])
-       expect(@cf.get_contacts_by_phone_filter(fake_connections,'')).to eq([])
+       # Checks if the result does not contain characters between the start and the end of the line:
+       # 1) '^' represents the beginning of the line and '$' represents the end of the line.
+       # 2) .{0} represents a zero-length string - the '.' symbolize the characters that can appear in the string.
+       # (every character except \n) and {d} defines the size of the string (size(str) = d).
+       # 
+       # This information is from the following guide: https://www.rubyguides.com/2015/06/ruby-regex/
+       # under the sections 'Ranges', 'Modifiers' and 'Exact String Matching'.
+       expect(@cf.get_contacts_by_phone_filter(fake_connections,"^.{0}$")).to eq([])
       end
     end
   end
