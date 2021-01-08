@@ -51,6 +51,7 @@ describe ContactFixer do
         mock_phone_number = instance_double("phoneNumbers")
         allow(mock_phone_number).to receive(:value).and_return(@contact_phone_number)
         person = instance_double("Person", :names => [], :phone_numbers => [mock_phone_number], :email_addresses => [])
+        svc = instance_double("PeopleServiceService")
         allow(@svc).to receive_message_chain(:list_person_connections, :connections) {[person]}
         # Act
         cf = ContactFixer.new(svc, @out)
