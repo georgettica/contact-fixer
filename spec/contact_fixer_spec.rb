@@ -8,6 +8,9 @@ describe ContactFixer do
   end
 
   describe '.get_all_contacts' do
+    before(:each) do
+      @contact_phone_number = "+9721234567"
+    end
     context 'when there are no contacts' do
       it 'prints an empty result' do
         svc = instance_double("PeopleServiceService", :list_person_connections => [])
@@ -39,6 +42,20 @@ describe ContactFixer do
           # Assert
           expect(@out.string).to include(expected_email)
         end
+      end
+    end
+    context 'he has a phone number and the print filter was defined' do
+      it 'print the user with the highlighted phone number' do
+        # Arrange
+        expected_phone_number = "+972".green + "1234567"
+        mock_phone_number = instance_double("phoneNumbers")
+        allow(mock_phone_number).to receive(:value).and_return(@contact_phone_number)
+        person = instance_double("Person", :names => [], :phone_numbers => [mock_phone_number], :email_addresses => [])
+        allow(@svc).to receive_message_chain(:list_person_connections, :connections) {[person]}
+        # Act
+        @cf.print_connections(@cf.get_all_contacts, "\\+972")
+        # Assert
+        expect(@out.string).to include(expected_phone_number)
       end
     end
   end
