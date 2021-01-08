@@ -187,6 +187,8 @@ describe ContactFixer do
         fake_person = instance_double('Person', :phone_numbers => [@fake_number], :names => [], :email_addresses => [])
         connections = [fake_person]
         @cf.update_connections_phone_numbers(connections, '3$', @replacement_pattern)
+        @cf.print_connection(fake_person)
+	      expect(@out.string).to include(expected_number)
       end
     end
   end
