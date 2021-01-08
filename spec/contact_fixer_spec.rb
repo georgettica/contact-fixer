@@ -154,29 +154,29 @@ describe ContactFixer do
   describe '.update_connections_phone_numbers' do
     before(:each) do
       @replacement_pattern = '123'
-	    @contact_number = "0118-999-881-999-119-725-3"
-	    @fake_number = instance_double("PhoneNumber")
-	    @cf = ContactFixer.new(nil, @out)
-	  end
-	  context 'no contacts exist' do
-	    it 'should return an empty collection' do
-	      connections = []
-		    expect(@cf.update_connections_phone_numbers(connections, '', @replacement_pattern)).to eq([])
-	    end
-	  end
-	  context 'contact exists and has no phone numbers' do
+      @contact_number = "0118-999-881-999-119-725-3"
+      @fake_number = instance_double("PhoneNumber")
+      @cf = ContactFixer.new(nil, @out)
+    end
+    context 'no contacts exist' do
+      it 'should return an empty collection' do
+        connections = []
+        expect(@cf.update_connections_phone_numbers(connections, '', @replacement_pattern)).to eq([])
+      end
+    end
+    context 'contact exists and has no phone numbers' do
       it 'should return the given connections collection' do
         fake_person = instance_double('Person', :phone_numbers => [])
-	      connections = [fake_person]
+        connections = [fake_person]
         expect(@cf.update_connections_phone_numbers(connections, '', @replacement_pattern)).to eq(connections)
       end
     end
-	  context 'contact exists with number and filter is invalid' do
+    context 'contact exists with number and filter is invalid' do
       it 'should raise a regex expression error' do
         allow(@fake_number).to receive(:value).and_return(@contact_number)
         fake_person = instance_double('Person', :phone_numbers => [@fake_number])
         connections = [fake_person]
-	      expect { @cf.update_connections_phone_numbers(connections, '*', @replacement_pattern) }.to raise_error(RegexpError)
+        expect { @cf.update_connections_phone_numbers(connections, '*', @replacement_pattern) }.to raise_error(RegexpError)
       end
     end
   end
