@@ -179,5 +179,15 @@ describe ContactFixer do
         expect { @cf.update_connections_phone_numbers(connections, '*', @replacement_pattern) }.to raise_error(RegexpError)
       end
     end
+    context 'contact exists with number and filter matches' do
+      it 'should return the contact with the updated number' do
+        expected_number = "0118-999-881-999-119-725-123"
+        expect(@fake_number).to receive(:value).with(no_args).and_return(@contact_number, expected_number)
+        allow(@fake_number).to receive(:value=).with(expected_number)
+        fake_person = instance_double('Person', :phone_numbers => [@fake_number], :names => [], :email_addresses => [])
+        connections = [fake_person]
+        @cf.update_connections_phone_numbers(connections, '3$', @replacement_pattern)
+      end
+    end
   end
 end
