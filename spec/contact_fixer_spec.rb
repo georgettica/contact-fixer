@@ -45,6 +45,8 @@ describe ContactFixer do
 
   describe '.get_contacts_by_phone_filter' do
     before(:each) do
+      @contact_number = "976-shoe"
+      @fake_number = instance_double("PhoneNumber")
       @cf = ContactFixer.new(nil, @out)
     end
     context 'no contacts exist' do
