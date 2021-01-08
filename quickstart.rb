@@ -63,8 +63,15 @@ cli = HighLine.new
 
 
 first_filter = cli.ask("What filter do you want ot run?  ") { |q| q.default = "[\+|0-9][0-9|\s|\\-|a-z|A-Z]*" }
+replacement_pattern = cli.ask("Choose replacement pattern (optional)  ") { |q| q.default = "\\0" }
 
 output = contact_fixer.get_contacts_by_phone_filter(all_contacts, first_filter)
+
+output.each do |contact|
+  contact_fixer.print_connection(contact)
+end
+
+contact_fixer.update_contacts_phone_numbers(output, first_filter, replacement_pattern)
 
 output.each do |contact|
   contact_fixer.print_connection(contact)
