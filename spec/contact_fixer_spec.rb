@@ -64,10 +64,8 @@ describe ContactFixer do
     end
     context 'contact exists with number and filter is empty' do
       it 'should print an empty result' do
-       expected_number = "a@a.com"
-       fake_number = instance_double("PhoneNumber")
-       allow(fake_number).to receive(:value).and_return(expected_number)
-       fake_person = instance_double('Person', :phone_numbers => [fake_number])
+       allow(@fake_number).to receive(:value).and_return(@contact_number)
+       fake_person = instance_double('Person', :phone_numbers => [@fake_number])
        fake_connections = instance_double('Connections', :connections => [fake_person])
        # Checks if the result does not contain characters between the start and the end of the line:
        # 1) '^' represents the beginning of the line and '$' represents the end of the line.
