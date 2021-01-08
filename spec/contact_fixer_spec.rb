@@ -53,7 +53,8 @@ describe ContactFixer do
         person = instance_double("Person", :names => [], :phone_numbers => [mock_phone_number], :email_addresses => [])
         allow(@svc).to receive_message_chain(:list_person_connections, :connections) {[person]}
         # Act
-        @cf.print_connections(@cf.get_all_contacts, "\\+972")
+        cf = ContactFixer.new(svc, @out)
+        cf.print_connections(cf.get_all_contacts, "\\+972")
         # Assert
         expect(@out.string).to include(expected_phone_number)
       end
