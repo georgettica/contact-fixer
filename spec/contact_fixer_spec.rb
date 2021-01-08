@@ -52,7 +52,7 @@ describe ContactFixer do
         allow(mock_phone_number).to receive(:value).and_return(@contact_phone_number)
         person = instance_double("Person", :names => [], :phone_numbers => [mock_phone_number], :email_addresses => [])
         svc = instance_double("PeopleServiceService")
-        allow(@svc).to receive_message_chain(:list_person_connections, :connections) {[person]}
+        allow(svc).to receive_message_chain(:list_person_connections, :connections) {[person]}
         # Act
         cf = ContactFixer.new(svc, @out)
         cf.print_connections(cf.get_all_contacts, "\\+972")
