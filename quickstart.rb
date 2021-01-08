@@ -71,7 +71,7 @@ output.each do |contact|
   contact_fixer.print_connection(contact)
 end
 
-contact_fixer.update_contacts_phone_numbers(output, first_filter, replacement_pattern)
+contact_fixer.update_connections_phone_numbers(output, first_filter, replacement_pattern)
 
 output.each do |contact|
   contact_fixer.print_connection(contact)
