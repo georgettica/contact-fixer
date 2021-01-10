@@ -5,24 +5,24 @@ require 'google/apis/people_v1'
 describe ContactFixer do
   before(:each) do
     @contact_phone_number = "976-shoe"
-	@phone_numbers_filter = "976"
-	@highlighted_phone_number = @phone_numbers_filter.green + "-shoe"
+    @phone_numbers_filter = "976"
+    @highlighted_phone_number = @phone_numbers_filter.green + "-shoe"
     @out = StringIO.new
   end
 
   describe '.print_connection_phone_numbers' do
     before(:each) do
       @mock_phone_number = instance_double("phoneNumbers")
-	  @cf = ContactFixer.new(nil, @out)
-	end
+      @cf = ContactFixer.new(nil, @out)
+    end
     context 'received conntection phone numbers with non defined filter' do
-	  it 'should print the contact phone numbers' do
-	    # Arrange
+      it 'should print the contact phone numbers' do
+        # Arrange
         allow(@mock_phone_number).to receive(:value).and_return(@contact_phone_number)
         # Act
         @cf.print_connection_phone_numbers([@mock_phone_number], nil)
-		# Assert
-		expect(@out.string).to include(@contact_phone_number)
+        # Assert
+        expect(@out.string).to include(@contact_phone_number)
       end
     end
     context 'received conntection phone numbers with defined filter' do
