@@ -67,5 +67,5 @@ first_filter = cli.ask("What filter do you want ot run?  ") { |q| q.default = "[
 output = contact_fixer.get_contacts_by_phone_filter(all_contacts, first_filter)
 
 output.each do |contact|
-  contact_fixer.print_connection(contact)
+  contact_fixer.print_connection(contact, first_filter)
 end
