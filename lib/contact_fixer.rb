@@ -61,14 +61,6 @@ class ContactFixer
       else
         phone_numbers.any? { |phone_number| phone_number.value.match(filter) }
       end
-      emails = person.email_addresses
-      if emails.nil?
-        @output.puts "No emails found for connection"
-      else
-        @output.puts "- " + emails.map { |email| email.value }.inspect
-      end
-      # newline is always good
-      @output.puts ""
     end
   end
 
