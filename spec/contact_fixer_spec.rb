@@ -4,13 +4,40 @@ require 'google/apis/people_v1'
 
 describe ContactFixer do
   before(:each) do
+    @contact_phone_number = "976-shoe"
+	@phone_numbers_filter = "976"
+	@highlighted_phone_number = @phone_numbers_filter.green + "-shoe"
     @out = StringIO.new
   end
 
-  describe '.get_all_contacts' do
+  describe '.print_connection_phone_numbers' do
     before(:each) do
-      @contact_phone_number = "+9721234567"
+      @mock_phone_number = instance_double("phoneNumbers")
+	  @cf = ContactFixer.new(nil, @out)
+	end
+    context 'received conntection phone numbers with non defined filter' do
+	  it 'should print the contact phone numbers' do
+	    # Arrange
+        allow(@mock_phone_number).to receive(:value).and_return(@contact_phone_number)
+        # Act
+        @cf.print_connection_phone_numbers([@mock_phone_number], nil)
+		# Assert
+		expect(@out.string).to include(@contact_phone_number)
+      end
     end
+    context 'received conntection phone numbers with defined filter' do
+      it 'should print the contact phone numbers with the filtered parts highlighted' do
+        # Arrange
+        allow(@mock_phone_number).to receive(:value).and_return(@contact_phone_number)
+        # Act
+        @cf.print_connection_phone_numbers([@mock_phone_number], @phone_numbers_filter)
+        # Assert
+        expect(@out.string).to include(@highlighted_phone_number)
+      end
+    end
+  end
+
+  describe '.get_all_contacts' do
     context 'when there are no contacts' do
       it 'prints an empty result' do
         svc = instance_double("PeopleServiceService", :list_person_connections => [])
@@ -47,7 +74,6 @@ describe ContactFixer do
     context 'he has a phone number and the print filter was defined' do
       it 'print the user with the highlighted phone number' do
         # Arrange
-        expected_phone_number = "+972".green + "1234567"
         mock_phone_number = instance_double("phoneNumbers")
         allow(mock_phone_number).to receive(:value).and_return(@contact_phone_number)
         person = instance_double("Person", :names => [], :phone_numbers => [mock_phone_number], :email_addresses => [])
@@ -55,16 +81,15 @@ describe ContactFixer do
         allow(svc).to receive_message_chain(:list_person_connections, :connections) {[person]}
         # Act
         cf = ContactFixer.new(svc, @out)
-        cf.print_connections(cf.get_all_contacts, "\\+972")
+        cf.print_connections(cf.get_all_contacts, @phone_numbers_filter)
         # Assert
-        expect(@out.string).to include(expected_phone_number)
+        expect(@out.string).to include(@highlighted_phone_number)
       end
     end
   end
 
   describe '.get_contacts_by_phone_filter' do
     before(:each) do
-      @contact_number = "976-shoe"
       @fake_number = instance_double("PhoneNumber")
       @cf = ContactFixer.new(nil, @out)
     end
@@ -83,7 +108,7 @@ describe ContactFixer do
     end
     context 'contact exists with number and filter is empty' do
       it 'should print an empty result' do
-       allow(@fake_number).to receive(:value).and_return(@contact_number)
+       allow(@fake_number).to receive(:value).and_return(@contact_phone_number)
        fake_person = instance_double('Person', :phone_numbers => [@fake_number])
        fake_connections = instance_double('Connections', :connections => [fake_person])
        # Checks if the result does not contain characters between the start and the end of the line:
