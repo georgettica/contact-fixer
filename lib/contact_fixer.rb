@@ -1,3 +1,5 @@
+require 'colorize'
+
 class ContactFixer
   def initialize(contacts_api, output)
     @contacts_api = contacts_api
@@ -19,7 +21,16 @@ class ContactFixer
     end
   end
 
-  def print_connection(person)
+  def print_connection_phone_numbers(phone_numbers, raw_filter)
+    if raw_filter.nil?
+      @output.puts "- " + phone_numbers.map { |phone_number| phone_number.value }.inspect
+    else
+      filter = Regexp.new raw_filter
+      @output.puts "- " + phone_numbers.map { |phone_number| phone_number.value }.inspect.gsub(filter) {|number| number.green}
+    end
+  end
+
+  def print_connection(person, raw_filter = nil)
     names = person.names
     if names.nil?
       @output.puts "No names found for connection"
@@ -30,7 +41,7 @@ class ContactFixer
     if phone_numbers.nil?
       @output.puts "No numbers found for connection"
     else
-      @output.puts "- " + phone_numbers.map { |phone_number| phone_number.value }.inspect
+      print_connection_phone_numbers(phone_numbers, raw_filter)
     end
     emails = person.email_addresses
     if emails.nil?
@@ -42,11 +53,11 @@ class ContactFixer
     @output.puts ""
   end
 
-  def print_connections(response)
+  def print_connections(response, raw_filter = nil)
     @output.puts "Connection names:"
     @output.puts "No connections found" if response.connections.empty?
     response.connections.each do |person|
-      print_connection(person)
+      print_connection(person, raw_filter)
     end
   end
 
@@ -61,14 +72,6 @@ class ContactFixer
       else
         phone_numbers.any? { |phone_number| phone_number.value.match(filter) }
       end
-      emails = person.email_addresses
-      if emails.nil?
-        @output.puts "No emails found for connection"
-      else
-        @output.puts "- " + emails.map { |email| email.value }.inspect
-      end
-      # newline is always good
-      @output.puts ""
     end
   end
 

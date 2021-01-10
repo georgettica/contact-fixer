@@ -29,6 +29,10 @@ describe ContactFixer do
     end
   end
   describe '.print_connections' do
+    before(:each) do
+      @contact_phone_number = "+9721234567"
+    end
+
     context 'he has only an email address' do
       it 'prints the user with the email' do
         # Arrange
@@ -46,15 +50,14 @@ describe ContactFixer do
     context 'he has only a phone number' do
       it 'prints the user with the phone number' do
         # Arrange
-        expected_phone_number = "+9721234567"
         mock_phone_number = instance_double("phoneNumbers")
-        allow(mock_phone_number).to receive(:value).and_return(expected_phone_number)
+        allow(mock_phone_number).to receive(:value).and_return(@contact_phone_number)
         person = instance_double("Person", :names => [], :phone_numbers => [mock_phone_number], :email_addresses => [])
         allow(@svc).to receive_message_chain(:list_person_connections, :connections) {[person]}
         # Act
         @cf.print_connections(@cf.get_all_contacts)
         # Assert
-        expect(@out.string).to include(expected_phone_number)
+        expect(@out.string).to include(@contact_phone_number)
       end
     end
     context 'he has only a name' do
@@ -69,6 +72,22 @@ describe ContactFixer do
         @cf.print_connections(@cf.get_all_contacts)
         # Assert
         expect(@out.string).to include(expected_name)
+      end
+    end
+    context 'he has a phone number and the print filter was defined' do
+      it 'print the user with the highlighted phone number' do
+        # Arrange
+        expected_phone_number = "+972".green + "1234567"
+        mock_phone_number = instance_double("phoneNumbers")
+        allow(mock_phone_number).to receive(:value).and_return(@contact_phone_number)
+        person = instance_double("Person", :names => [], :phone_numbers => [mock_phone_number], :email_addresses => [])
+        svc = instance_double("PeopleServiceService")
+        allow(svc).to receive_message_chain(:list_person_connections, :connections) {[person]}
+        # Act
+        cf = ContactFixer.new(svc, @out)
+        cf.print_connections(cf.get_all_contacts, "\\+972")
+        # Assert
+        expect(@out.string).to include(expected_phone_number)
       end
     end
   end
