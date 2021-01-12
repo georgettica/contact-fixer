@@ -10,4 +10,4 @@ jobs:
     - uses: mgred/asciidoctor-action@master
       with:
         # TODO: this should fail on README.adoc not found
-        args: asciidoctor README.adoc
+        args: asciidoctor README.adoc 
