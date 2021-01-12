@@ -56,7 +56,7 @@ class ContactFixer
     connections.each do |person|
       phone_numbers = person.phone_numbers
       unless phone_numbers.nil?
-        phone_numbers.each{|phone_number| phone_number.value = phone_number.value.gsub(regex, substitute_pattern)}
+        phone_numbers.each{|phone_number| phone_number.value.gsub!(regex, substitute_pattern)}
       end
     end
   end
