@@ -4,7 +4,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    # TODO: change to v2 as it's available
     - uses: actions/checkout@v2
     # Include asciidoctor-action and run the cli tool
     - uses: mgred/asciidoctor-action@master
