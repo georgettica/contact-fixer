@@ -1,3 +1,5 @@
+MAXIMUM_NUMBER_OF_DISPLAYED_CONTACTS = 1000
+
 class ContactFixer
   def initialize(contacts_api, output)
     @contacts_api = contacts_api
@@ -50,6 +52,14 @@ class ContactFixer
     end
   end
 
+  def upload_connection_data(person)
+    @contacts_api.update_person_contact(
+      person.resource_name,
+      person,
+      update_person_fields: "phoneNumbers"
+    )
+  end
+
   def update_connections_phone_numbers(connections, raw_regex, substitute_pattern)
     regex = Regexp.new raw_regex
     @output.puts "No connections found" if connections.empty?
@@ -78,7 +88,7 @@ class ContactFixer
   def get_all_contacts
     @contacts_api.list_person_connections(
       "people/me",
-    #  page_size:     10, # not used as I need all of the contacts
+      page_size: MAXIMUM_NUMBER_OF_DISPLAYED_CONTACTS,
       person_fields: "names,phoneNumbers,emailAddresses"
     )
   end

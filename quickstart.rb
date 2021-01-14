@@ -21,6 +21,8 @@ CREDENTIALS_PATH = "secrets/credentials.json".freeze
 TOKEN_PATH = "secrets/token.yaml".freeze
 SCOPE = Google::Apis::PeopleV1::AUTH_CONTACTS
 
+TIMEOUT_BETWEEN_UPLOAD_REQUESTS_IN_SECONDS = 2
+
 ##
 # Ensure valid credentials, either by restoring from the saved credentials
 # files or intitiating an OAuth2 authorization. If authorization is required,
@@ -79,4 +81,12 @@ contact_fixer.update_connections_phone_numbers(output, first_filter, replacement
 
 output.each do |contact|
   contact_fixer.print_connection(contact)
+end
+
+puts "Uploading the updated connections phone numbers.\n\n"
+
+output.each do |contact|
+  contact_fixer.upload_connection_data(contact)
+  # Adding a time gap between sent requests in order to avoid requests overload.
+  sleep(TIMEOUT_BETWEEN_UPLOAD_REQUESTS_IN_SECONDS)
 end
