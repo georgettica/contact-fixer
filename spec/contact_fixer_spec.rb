@@ -177,7 +177,7 @@ describe ContactFixer do
         @fake_number = instance_double("PhoneNumber")
         fake_person = instance_double('Person', :phone_numbers => [@fake_number], :resource_name => person_resource_name)
         # Act and assert
-        expect(@svc).to receive(:update_person_contact).with(person_resource_name, fake_person, {:update_person_fields => "phoneNumbers"})
+        expect(@svc).to receive(:update_person_contact).with(person_resource_name, fake_person, {:update_person_fields => CONTACTS_PHONE_NUMBERS_FIELD_NAME})
         @cf.upload_connection_data(fake_person)
       end
     end
