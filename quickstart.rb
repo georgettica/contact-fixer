@@ -98,5 +98,5 @@ end
 cli.choose do |menu|
   menu.prompt = "Do you wish to upload the changes?"
   menu.choice(:Yes) { upload_contacts(output, contact_fixer, cli) }
-  menu.choices(:False) { cli.say("Have a nice day :)") }
+  menu.choices(:No) { cli.say("Have a nice day :)") }
 end
