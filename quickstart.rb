@@ -59,6 +59,18 @@ def init_service
   service
 end
 
+##
+# Uploads contacts with updated phone numbers to google contacts list.
+#
+def upload_contacts(contacts, contact_fixer, cli)
+  cli.say("Uploading the updated connections phone numbers.")
+  contacts.each do |contact|
+    contact_fixer.upload_connection_data(contact)
+    # Adding a time gap between sent requests in order to avoid requests overload.
+    sleep(TIMEOUT_BETWEEN_UPLOAD_REQUESTS_IN_SECONDS)
+  end
+end
+
 contact_fixer = ContactFixer.new(init_service, $stdout)
 all_contacts = contact_fixer.get_all_contacts
 cli = HighLine.new
@@ -83,10 +95,8 @@ output.each do |contact|
   contact_fixer.print_connection(contact)
 end
 
-puts "Uploading the updated connections phone numbers.\n\n"
-
-output.each do |contact|
-  contact_fixer.upload_connection_data(contact)
-  # Adding a time gap between sent requests in order to avoid requests overload.
-  sleep(TIMEOUT_BETWEEN_UPLOAD_REQUESTS_IN_SECONDS)
+cli.choose do |menu|
+  menu.prompt = "Do you wish to upload the changes?"
+  menu.choice(:Yes) { upload_contacts(output, contact_fixer, cli) }
+  menu.choices(:False) { cli.say("Have a nice day :)") }
 end
