@@ -26,10 +26,11 @@ class ContactFixer
   end
 
   def print_connection_phone_numbers(phone_numbers)
+    displayed_phone_numbers = "- " + phone_numbers.map { |phone_number| phone_number.value }.inspect
     if @filter.nil?
-      @output.puts "- " + phone_numbers.map { |phone_number| phone_number.value }.inspect
+      @output.puts displayed_phone_numbers
     else
-      @output.puts "- " + phone_numbers.map { |phone_number| phone_number.value }.inspect.gsub(@filter) {|number| number.green}
+      @output.puts displayed_phone_numbers.gsub(@filter) {|number| number.green}
     end
   end
 
