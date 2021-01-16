@@ -57,12 +57,13 @@ def init_service
   service
 end
 
-contact_fixer = ContactFixer.new(init_service, $stdout)
-all_contacts = contact_fixer.get_all_contacts
 cli = HighLine.new
 
-
 raw_filter = cli.ask("What filter do you want ot run?  ") { |q| q.default = "[\+|0-9][0-9|\s|\\-|a-z|A-Z]*" }
+
+contact_fixer = ContactFixer.new(init_service, $stdout, raw_filter)
+all_contacts = contact_fixer.get_all_contacts
+
 replacement_pattern = cli.ask("Choose replacement pattern (optional)  ") { |q| q.default = "\\0" }
 
 puts "\nFiltering contacts with the chosen filter.\n\n"

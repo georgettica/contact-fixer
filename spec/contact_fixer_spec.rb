@@ -14,26 +14,17 @@ describe ContactFixer do
     @out = StringIO.new
   end
 
-  describe '.filter_attribute' do
-    context 'set the filter attribute with an update value' do
-      it 'should update the filter attribute value' do
-        cf = ContactFixer.new(nil, @out)
-        cf.filter = PHONE_NUMBERS_FILTER
-        expect(cf.filter).to eq(PHONE_NUMBERS_FILTER)
-      end
-    end
-  end
-
   describe '.print_connection_phone_numbers' do
     before(:each) do
-      @cf = ContactFixer.new(nil, @out)
+      @cf_without_filter = ContactFixer.new(nil, @out)
+      @cf_with_filter = ContactFixer.new(nil, @out, PHONE_NUMBERS_FILTER)
     end
     context 'received conntection phone numbers with non defined filter' do
       it 'should print the contact phone numbers' do
         # Arrange
         allow(@mock_phone_number).to receive(:value).and_return(CONTACT_PHONE_NUMBER)
         # Act
-        @cf.print_connection_phone_numbers([@mock_phone_number])
+        @cf_without_filter.print_connection_phone_numbers([@mock_phone_number])
         # Assert
         expect(@out.string).to include(CONTACT_PHONE_NUMBER)
       end
@@ -41,10 +32,9 @@ describe ContactFixer do
     context 'received conntection phone numbers with defined filter' do
       it 'should print the contact phone numbers with the filtered parts highlighted' do
         # Arrange
-        @cf.filter = PHONE_NUMBERS_FILTER
         allow(@mock_phone_number).to receive(:value).and_return(CONTACT_PHONE_NUMBER)
         # Act
-        @cf.print_connection_phone_numbers([@mock_phone_number])
+        @cf_with_filter.print_connection_phone_numbers([@mock_phone_number])
         # Assert
         expect(@out.string).to include(HIGHLIGHTED_PHONE_NUMBER)
       end
@@ -89,8 +79,7 @@ describe ContactFixer do
       it 'print the user with the highlighted phone number' do
         # Arrange
         svc = instance_double("PeopleServiceService")
-        cf = ContactFixer.new(svc, @out)
-        cf.filter = PHONE_NUMBERS_FILTER
+        cf = ContactFixer.new(svc, @out, PHONE_NUMBERS_FILTER)
         allow(@mock_phone_number).to receive(:value).and_return(CONTACT_PHONE_NUMBER)
         person = instance_double("Person", :names => [], :phone_numbers => [@mock_phone_number], :email_addresses => [])
         allow(svc).to receive_message_chain(:list_person_connections, :connections) {[person]}
@@ -148,12 +137,11 @@ describe ContactFixer do
       @replacement_pattern = '123'
       @contact_number = "0118-999-881-999-119-725-3"
       @fake_number = instance_double("PhoneNumber")
-      @cf = ContactFixer.new(nil, @out)
     end
     context 'no contacts exist' do
       it 'should return an empty collection' do
         # Arrange
-        allow(@cf).to receive(:filter).with(Regexp.new '')
+        @cf = ContactFixer.new(nil, @out, '')
         connections = []
         # Act and assert
         expect(@cf.update_connections_phone_numbers(connections, @replacement_pattern)).to eq([])
@@ -162,7 +150,7 @@ describe ContactFixer do
     context 'contact exists and has no phone numbers' do
       it 'should return the given connections collection' do
         # Arrange
-        allow(@cf).to receive(:filter).with(Regexp.new '')
+        @cf = ContactFixer.new(nil, @out, '')
         fake_person = instance_double('Person', :phone_numbers => [])
         connections = [fake_person]
         # Act and assert
@@ -172,7 +160,7 @@ describe ContactFixer do
     context 'contact exists with number and filter matches' do
       it 'should return the contact with the updated number' do
         # Arrange
-        @cf.filter = Regexp.new '3$'
+        @cf = ContactFixer.new(nil, @out, '3$')
         expected_number = "0118-999-881-999-119-725-123"
         expect(@fake_number).to receive(:value).and_return(@contact_number, expected_number)
         allow(@fake_number).to receive(:value=).with(expected_number)

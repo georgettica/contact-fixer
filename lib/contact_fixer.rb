@@ -1,18 +1,13 @@
 require 'colorize'
 
 class ContactFixer
-  def initialize(contacts_api, output)
+  def initialize(contacts_api, output, raw_filter = nil)
     @filter = nil
+    unless raw_filter.nil?
+      @filter = Regexp.new raw_filter
+    end
     @contacts_api = contacts_api
     @output = output
-  end
-
-  def filter
-    @filter
-  end
-
-  def filter=(updated_filter)
-    @filter = updated_filter
   end
 
   # Added the method from the following discussion: https://www.ruby-forum.com/t/how-to-detect-if-a-string-contains-any-funny-characters-from-non-english-alphabets/143811/2
