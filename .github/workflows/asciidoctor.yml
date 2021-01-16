@@ -1,10 +1,4 @@
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-
-name: README asciidoctior verification
+on: [push]
 
 jobs:
   build:
@@ -12,6 +6,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     # Include asciidoctor-action and run the cli tool
-    - uses: avattathil/asciidoctor-action@master
+    - uses: mgred/asciidoctor-action@master
       with:
-        program: "asciidoctor README.adoc"
+        # TODO: this should fail on README.adoc not found
+        args: asciidoctor README.adoc
