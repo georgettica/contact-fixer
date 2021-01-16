@@ -46,17 +46,21 @@ describe ContactFixer do
   describe '.get_all_contacts' do
     context 'when there are no contacts' do
       it 'prints an empty result' do
+        # Arrange
         @svc = instance_double("PeopleServiceService", :list_person_connections => [])
         @cf = ContactFixer.new(@svc, @out)
+        # Act and assert
         expect(@cf.get_all_contacts).to eq([])
       end
     end
     context 'when there is one contact' do
       context 'and he has no fields' do
         it 'print an empty user' do
+          # Arrange
           person = Google::Apis::PeopleV1::Person::new
           @svc = instance_double("PeopleServiceService", :list_person_connections => [person])
           @cf = ContactFixer.new(@svc, @out)
+          # Act and assert
           expect(@cf.get_all_contacts).to eq([person])
         end
       end
@@ -201,6 +205,19 @@ describe ContactFixer do
         # Assert
         @cf.print_connection(fake_person)
         expect(@out.string).to include(expected_number)
+      end
+    end
+  end
+  describe '.upload_connection_data' do
+    context 'receives contact data' do
+      it 'should send an update request' do
+        # Arrange
+        person_resource_name = "people/id452"
+        @fake_number = instance_double("PhoneNumber")
+        fake_person = instance_double('Person', :phone_numbers => [@fake_number], :resource_name => person_resource_name)
+        # Act and assert
+        expect(@svc).to receive(:update_person_contact).with(person_resource_name, fake_person, {:update_person_fields => CONTACTS_PHONE_NUMBERS_FIELD_NAME})
+        @cf.upload_connection_data(fake_person)
       end
     end
   end
