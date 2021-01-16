@@ -1,10 +1,4 @@
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-
-name: README asciidoctior verification
+on: [push]
 
 jobs:
   build:

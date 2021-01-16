@@ -57,14 +57,26 @@ def init_service
   service
 end
 
-contact_fixer = ContactFixer.new(init_service, $stdout)
-all_contacts = contact_fixer.get_all_contacts
 cli = HighLine.new
 
+raw_filter = cli.ask("What filter do you want ot run?  ") { |q| q.default = "[\+|0-9][0-9|\s|\\-|a-z|A-Z]*" }
 
-first_filter = cli.ask("What filter do you want ot run?  ") { |q| q.default = "[\+|0-9][0-9|\s|\\-|a-z|A-Z]*" }
+contact_fixer = ContactFixer.new(init_service, $stdout, raw_filter)
+all_contacts = contact_fixer.get_all_contacts
 
-output = contact_fixer.get_contacts_by_phone_filter(all_contacts, first_filter)
+replacement_pattern = cli.ask("Choose replacement pattern (optional)  ") { |q| q.default = "\\0" }
+
+puts "\nFiltering contacts with the chosen filter.\n\n"
+
+output = contact_fixer.get_contacts_by_phone_filter(all_contacts, raw_filter)
+
+output.each do |contact|
+  contact_fixer.print_connection(contact)
+end
+
+puts "Updating connections numbers according to the given filter and replacement pattern.\n\n"
+
+contact_fixer.update_connections_phone_numbers(output, replacement_pattern)
 
 output.each do |contact|
   contact_fixer.print_connection(contact)
