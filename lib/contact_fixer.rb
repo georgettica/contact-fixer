@@ -3,9 +3,14 @@ CONTACTS_NAMES_FIELD_NAME = "names"
 CONTACTS_PHONE_NUMBERS_FIELD_NAME = "phoneNumbers"
 CONTACTS_EMAIL_ADDRESSES_FIELD_NAME = "emailAddresses"
 
+require 'colorize'
 
 class ContactFixer
-  def initialize(contacts_api, output)
+  def initialize(contacts_api, output, raw_filter = nil)
+    @filter = nil
+    unless raw_filter.nil?
+      @filter = Regexp.new raw_filter
+    end
     @contacts_api = contacts_api
     @output = output
   end
@@ -25,6 +30,15 @@ class ContactFixer
     end
   end
 
+  def print_connection_phone_numbers(phone_numbers)
+    displayed_phone_numbers = "- " + phone_numbers.map { |phone_number| phone_number.value }.inspect
+    if @filter.nil?
+      @output.puts displayed_phone_numbers
+    else
+      @output.puts displayed_phone_numbers.gsub(@filter) {|number| number.green}
+    end
+  end
+
   def print_connection(person)
     names = person.names
     if names.nil?
@@ -36,7 +50,7 @@ class ContactFixer
     if phone_numbers.nil?
       @output.puts "No numbers found for connection"
     else
-      @output.puts "- " + phone_numbers.map { |phone_number| phone_number.value }.inspect
+      print_connection_phone_numbers(phone_numbers)
     end
     emails = person.email_addresses
     if emails.nil?
@@ -64,19 +78,18 @@ class ContactFixer
     )
   end
 
-  def update_connections_phone_numbers(connections, raw_regex, substitute_pattern)
-    regex = Regexp.new raw_regex
+  def update_connections_phone_numbers(connections, substitute_pattern)
     @output.puts "No connections found" if connections.empty?
     connections.each do |person|
       phone_numbers = person.phone_numbers
       unless phone_numbers.nil?
-        phone_numbers.each{|phone_number| phone_number.value.gsub!(regex, substitute_pattern)}
+        phone_numbers.each{|phone_number| phone_number.value.gsub!(@filter, substitute_pattern)}
       end
     end
   end
 
   def get_contacts_by_phone_filter(contacts, raw_filter)
-    filter = Regexp.new raw_filter
+    @filter = Regexp.new raw_filter
     @output.puts "No connections found" if contacts.connections.empty?
     contacts.connections.select do |person|
       phone_numbers = person.phone_numbers
@@ -84,7 +97,7 @@ class ContactFixer
       if phone_numbers.nil?
         false
       else
-        phone_numbers.any? { |phone_number| phone_number.value.match(filter) }
+        phone_numbers.any? { |phone_number| phone_number.value.match(@filter) }
       end
     end
   end
