@@ -2,8 +2,17 @@ require 'colorize'
 
 class ContactFixer
   def initialize(contacts_api, output)
+    @filter = nil
     @contacts_api = contacts_api
     @output = output
+  end
+
+  def filter
+    @filter
+  end
+
+  def filter=(updated_filter)
+    @filter = updated_filter
   end
 
   # Added the method from the following discussion: https://www.ruby-forum.com/t/how-to-detect-if-a-string-contains-any-funny-characters-from-non-english-alphabets/143811/2
@@ -21,16 +30,15 @@ class ContactFixer
     end
   end
 
-  def print_connection_phone_numbers(phone_numbers, raw_filter)
-    if raw_filter.nil?
+  def print_connection_phone_numbers(phone_numbers)
+    if @filter.nil?
       @output.puts "- " + phone_numbers.map { |phone_number| phone_number.value }.inspect
     else
-      filter = Regexp.new raw_filter
-      @output.puts "- " + phone_numbers.map { |phone_number| phone_number.value }.inspect.gsub(filter) {|number| number.green}
+      @output.puts "- " + phone_numbers.map { |phone_number| phone_number.value }.inspect.gsub(@filter) {|number| number.green}
     end
   end
 
-  def print_connection(person, raw_filter = nil)
+  def print_connection(person)
     names = person.names
     if names.nil?
       @output.puts "No names found for connection"
@@ -41,7 +49,7 @@ class ContactFixer
     if phone_numbers.nil?
       @output.puts "No numbers found for connection"
     else
-      print_connection_phone_numbers(phone_numbers, raw_filter)
+      print_connection_phone_numbers(phone_numbers)
     end
     emails = person.email_addresses
     if emails.nil?
@@ -53,27 +61,26 @@ class ContactFixer
     @output.puts ""
   end
 
-  def print_connections(response, raw_filter = nil)
+  def print_connections(response)
     @output.puts "Connection names:"
     @output.puts "No connections found" if response.connections.empty?
     response.connections.each do |person|
-      print_connection(person, raw_filter)
+      print_connection(person)
     end
   end
 
-  def update_connections_phone_numbers(connections, raw_regex, substitute_pattern)
-    regex = Regexp.new raw_regex
+  def update_connections_phone_numbers(connections, substitute_pattern)
     @output.puts "No connections found" if connections.empty?
     connections.each do |person|
       phone_numbers = person.phone_numbers
       unless phone_numbers.nil?
-        phone_numbers.each{|phone_number| phone_number.value.gsub!(regex, substitute_pattern)}
+        phone_numbers.each{|phone_number| phone_number.value.gsub!(@filter, substitute_pattern)}
       end
     end
   end
 
   def get_contacts_by_phone_filter(contacts, raw_filter)
-    filter = Regexp.new raw_filter
+    @filter = Regexp.new raw_filter
     @output.puts "No connections found" if contacts.connections.empty?
     contacts.connections.select do |person|
       phone_numbers = person.phone_numbers
@@ -81,7 +88,7 @@ class ContactFixer
       if phone_numbers.nil?
         false
       else
-        phone_numbers.any? { |phone_number| phone_number.value.match(filter) }
+        phone_numbers.any? { |phone_number| phone_number.value.match(@filter) }
       end
     end
   end
