@@ -46,18 +46,22 @@ describe ContactFixer do
   describe '.get_all_contacts' do
     context 'when there are no contacts' do
       it 'prints an empty result' do
-        svc = instance_double("PeopleServiceService", :list_person_connections => [])
-        cf = ContactFixer.new(svc, @out)
-        expect(cf.get_all_contacts).to eq([])
+        # Arrange
+        @svc = instance_double("PeopleServiceService", :list_person_connections => [])
+        @cf = ContactFixer.new(@svc, @out)
+        # Act and assert
+        expect(@cf.get_all_contacts).to eq([])
       end
     end
     context 'when there is one contact' do
       context 'and he has no fields' do
         it 'print an empty user' do
+          # Arrange
           person = Google::Apis::PeopleV1::Person::new
-          svc = instance_double("PeopleServiceService", :list_person_connections => [person])
-          cf = ContactFixer.new(svc, @out)
-          expect(cf.get_all_contacts).to eq([person])
+          @svc = instance_double("PeopleServiceService", :list_person_connections => [person])
+          @cf = ContactFixer.new(@svc, @out)
+          # Act and assert
+          expect(@cf.get_all_contacts).to eq([person])
         end
       end
     end
