@@ -4,14 +4,12 @@ on:
   pull_request:
     branches: [ main ]
 
-name: README asciidoctior verification
-
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
     # Include asciidoctor-action and run the cli tool
-    - uses: avattathil/asciidoctor-action@master
+    - uses: mgred/asciidoctor-action@master
       with:
-        program: "asciidoctor README.adoc"
+        args: asciidoctor README.adoc
