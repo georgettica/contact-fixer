@@ -23,6 +23,9 @@ SCOPE = Google::Apis::PeopleV1::AUTH_CONTACTS
 
 TIMEOUT_BETWEEN_UPLOAD_REQUESTS_IN_SECONDS = 2
 
+DEFAULT_RAW_FILTER = "[\+|0-9][0-9|\s|\\-|a-z|A-Z]*"
+DEFAULT_REPLACEMENT_PATTERN = "\\0"
+
 ##
 # Ensure valid credentials, either by restoring from the saved credentials
 # files or intitiating an OAuth2 authorization. If authorization is required,
@@ -60,6 +63,15 @@ def init_service
 end
 
 ##
+# Checks if some of the contacts phone numbers are updated with the given filter and
+# replacement pattern.
+#
+# @return a boolean value that represents the check result.
+def were_changes_made(raw_filter, replacement_pattern)
+  raw_filter != DEFAULT_RAW_FILTER or replacement_pattern != DEFAULT_REPLACEMENT_PATTERN
+end
+
+##
 # Uploads contacts with updated phone numbers to google contacts list.
 #
 def upload_contacts(contacts, contact_fixer, cli)
@@ -76,12 +88,12 @@ all_contacts = contact_fixer.get_all_contacts
 
 cli = HighLine.new
 
-raw_filter = cli.ask("What filter do you want ot run?  ") { |q| q.default = "[\+|0-9][0-9|\s|\\-|a-z|A-Z]*" }
+raw_filter = cli.ask("What filter do you want ot run?  ") { |q| q.default = DEFAULT_RAW_FILTER }
 
 contact_fixer = ContactFixer.new(init_service, $stdout, raw_filter)
 all_contacts = contact_fixer.get_all_contacts
 
-replacement_pattern = cli.ask("Choose replacement pattern (optional)  ") { |q| q.default = "\\0" }
+replacement_pattern = cli.ask("Choose replacement pattern (optional)  ") { |q| q.default = DEFAULT_REPLACEMENT_PATTERN }
 
 puts "\nFiltering contacts with the chosen filter.\n\n"
 
@@ -99,8 +111,12 @@ output.each do |contact|
   contact_fixer.print_connection(contact)
 end
 
-cli.choose do |menu|
-  menu.prompt = "Do you wish to upload the changes?"
-  menu.choice(:Yes) { upload_contacts(output, contact_fixer, cli) }
-  menu.choices(:No) { cli.say("Have a nice day :)") }
+if were_changes_made(raw_filter, replacement_pattern)
+  cli.choose do |menu|
+    menu.prompt = "Do you wish to upload the changes?"
+    menu.choice(:Yes) { upload_contacts(output, contact_fixer, cli) }
+    menu.choices(:No) { cli.say("Have a nice day :)") }
+  end
+else
+  cli.say("Could not detect contact number changes - skipping the contacts upload process.")
 end
