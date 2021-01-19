@@ -12,8 +12,8 @@ esac
 # Mount repository path
 if [[ $machine == "Linux"  || $machine == "Mac" ]]
 then
-	docker run --rm -it -v $(pwd):/app-dir/local -w /app-dir/local contacts-fixer sh
+	docker run --rm -it -v $(pwd):/app-dir/local -w /app-dir/local contacts-fixer bash
 else
 	windows_path=$(cygpath -w $(pwd))
-	docker run --rm -it -v $windows_path:/app-dir/local contacts-fixer sh
+	docker run --rm -it -v $windows_path:/app-dir/local contacts-fixer bash
 fi

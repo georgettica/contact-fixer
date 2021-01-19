@@ -1,6 +1,7 @@
 source "https://rubygems.org"
 
-gem "google-api-client", "~> 0.28.4"
+gem "google-apis-people_v1"
+gem 'simplecov', require: false, group: :test
 gem "colorize"
 gem "rspec"
 

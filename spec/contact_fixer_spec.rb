@@ -1,3 +1,8 @@
+require 'simplecov'
+SimpleCov.start 'rails' do
+  enable_coverage :branch
+  SimpleCov.minimum_coverage_by_file line: 85
+end
 require 'contact_fixer'
 require 'stringio'
 require 'google/apis/people_v1'
@@ -14,6 +19,39 @@ describe ContactFixer do
     @mock_phone_number = instance_double("PhoneNumber")
     @out = StringIO.new
     @cf = ContactFixer.new(@svc, @out)
+  end
+
+  describe '.is_non_roman' do
+    context 'input string contains only "Roman Alphabet" characters' do
+      it 'should return false' do
+       str = "st"
+       expect(ContactFixer.is_non_roman(false))
+      end
+    end
+    context 'input string contains non "Roman Alphabet" characters' do
+      it 'should return true' do
+       str = "מחרוזת"
+       expect(ContactFixer.is_non_roman(true))
+      end
+    end
+  end
+
+  describe '.get_fixed_display_name' do
+    before(:each) do
+      @cf = ContactFixer.new(nil, @out)
+    end
+    context 'display name contains only "Roman Alphabet" characters' do
+      it 'should return the display name without changes' do
+       display_name = "contact"
+       expect(@cf.get_fixed_display_name(display_name)).to eq(display_name)
+      end
+    end
+    context 'display name contains non "Roman Alphabet" characters' do
+      it 'should reverse the order of the display name characters' do
+       display_name = "איש קשר"
+       expect(@cf.get_fixed_display_name(display_name)).to eq(display_name.reverse)
+      end
+    end
   end
 
   describe '.print_connection_phone_numbers' do
@@ -65,7 +103,7 @@ describe ContactFixer do
         end
       end
     end
-  end
+  end  
 
   describe '.print_connections' do
     context 'he has only an email address' do
@@ -136,6 +174,15 @@ describe ContactFixer do
       end
     end
     context 'contact exists and has no phone numbers' do
+      it 'should print an empty result' do
+       # Arrange
+       fake_person = instance_double('Person', :phone_numbers => nil)
+       fake_connections = instance_double('Connections', :connections => [fake_person])
+       # Act and assert
+       expect(@cf.get_contacts_by_phone_filter(fake_connections,'')).to eq([])
+      end
+    end
+    context 'contact exists and has empty phone number collection' do
       it 'should print an empty result' do
        # Arrange
        fake_person = instance_double('Person', :phone_numbers => [])
