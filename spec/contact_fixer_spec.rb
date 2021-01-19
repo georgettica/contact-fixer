@@ -109,11 +109,9 @@ describe ContactFixer do
           mock_email = instance_double("EmailAddress")
           allow(mock_email).to receive(:value).and_return(expected_email)
           person = instance_double("Person", :names => nil, :phone_numbers => nil, :email_addresses => [mock_email])
-          svc = instance_double("PeopleServiceService")
           allow(svc).to receive_message_chain(:list_person_connections, :connections) {[person]}
           # Act
-          cf = ContactFixer.new(svc, @out)
-          cf.print_connections(cf.get_all_contacts)
+          @cf.print_connections(@cf.get_all_contacts)
           # Assert
           expect(@out.string).to include(expected_email)
         end
