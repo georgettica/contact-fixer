@@ -34,4 +34,4 @@ jobs:
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v2.2.2
       with:
-        path: coverage/index.html
+        path: coverage
