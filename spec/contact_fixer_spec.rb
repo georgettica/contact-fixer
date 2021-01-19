@@ -102,21 +102,8 @@ describe ContactFixer do
           expect(@cf.get_all_contacts).to eq([person])
         end
       end
-      context 'he has only an email address' do
-        it 'prints the user with the email' do
-          # Arrange
-          expected_email = "a@a.com"
-          mock_email = instance_double("EmailAddress")
-          allow(mock_email).to receive(:value).and_return(expected_email)
-          person = instance_double("Person", :names => nil, :phone_numbers => nil, :email_addresses => [mock_email])
-          allow(svc).to receive_message_chain(:list_person_connections, :connections) {[person]}
-          # Act
-          @cf.print_connections(@cf.get_all_contacts)
-          # Assert
-          expect(@out.string).to include(expected_email)
-        end
     end
-  end
+  end  
 
   describe '.print_connections' do
     context 'he has only an email address' do
