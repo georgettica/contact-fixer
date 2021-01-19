@@ -1,4 +1,8 @@
-on: [push]
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   build:
@@ -8,5 +12,4 @@ jobs:
     # Include asciidoctor-action and run the cli tool
     - uses: mgred/asciidoctor-action@master
       with:
-        # TODO: this should fail on README.adoc not found
         args: asciidoctor README.adoc

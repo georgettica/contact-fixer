@@ -1,3 +1,8 @@
+MAXIMUM_NUMBER_OF_DISPLAYED_CONTACTS = 1000
+CONTACTS_NAMES_FIELD_NAME = "names"
+CONTACTS_PHONE_NUMBERS_FIELD_NAME = "phoneNumbers"
+CONTACTS_EMAIL_ADDRESSES_FIELD_NAME = "emailAddresses"
+
 require 'colorize'
 
 class ContactFixer
@@ -65,6 +70,14 @@ class ContactFixer
     end
   end
 
+  def upload_connection_data(person)
+    @contacts_api.update_person_contact(
+      person.resource_name,
+      person,
+      update_person_fields: CONTACTS_PHONE_NUMBERS_FIELD_NAME
+    )
+  end
+
   def update_connections_phone_numbers(connections, substitute_pattern)
     @output.puts "No connections found" if connections.empty?
     connections.each do |person|
@@ -92,8 +105,8 @@ class ContactFixer
   def get_all_contacts
     @contacts_api.list_person_connections(
       "people/me",
-    #  page_size:     10, # not used as I need all of the contacts
-      person_fields: "names,phoneNumbers,emailAddresses"
+      page_size: MAXIMUM_NUMBER_OF_DISPLAYED_CONTACTS,
+      person_fields: [CONTACTS_NAMES_FIELD_NAME, CONTACTS_PHONE_NUMBERS_FIELD_NAME, CONTACTS_EMAIL_ADDRESSES_FIELD_NAME].join(',')
     )
   end
 
