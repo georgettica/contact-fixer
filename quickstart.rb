@@ -64,10 +64,14 @@ end
 #
 def upload_contacts(contacts, contact_fixer, cli)
   cli.say("Uploading the updated connections phone numbers.")
-  contacts.each do |contact|
+  contacts.each_with_index do |contact, i|
     contact_fixer.upload_connection_data(contact)
     # Adding a time gap between sent requests in order to avoid requests overload.
-    sleep(TIMEOUT_BETWEEN_UPLOAD_REQUESTS_IN_SECONDS)
+    puts "successfully uploaded contact no %d" % i
+    if i % 20 == 0
+      puts "sleeeping for %d seconds" % TIMEOUT_BETWEEN_UPLOAD_REQUESTS_IN_SECONDS
+      sleep(TIMEOUT_BETWEEN_UPLOAD_REQUESTS_IN_SECONDS)
+    end
   end
 end
 
@@ -83,24 +87,33 @@ all_contacts = contact_fixer.get_all_contacts
 
 replacement_pattern = cli.ask("Choose replacement pattern (optional)  ") { |q| q.default = "\\0" }
 
-puts "\nFiltering contacts with the chosen filter.\n\n"
+puts "\nFiltering contacts with the chosen filter.\n"
 
-output = contact_fixer.get_contacts_by_phone_filter(all_contacts, raw_filter)
+filtered_contacts = contact_fixer.get_contacts_by_phone_filter(all_contacts, raw_filter)
 
-output.each do |contact|
+
+filtered_contacts.each do |contact|
   contact_fixer.print_connection(contact)
 end
+puts "\nFound %d items, and printed them." % filtered_contacts.length
 
 puts "Updating connections numbers according to the given filter and replacement pattern.\n\n"
 
-contact_fixer.update_connections_phone_numbers(output, replacement_pattern)
+modified_contacts = contact_fixer.update_connections_phone_numbers(filtered_contacts, replacement_pattern)
 
-output.each do |contact|
+puts "\nFound %d items, printing them:" % modified_contacts.length
+
+modified_contacts.each do |contact|
   contact_fixer.print_connection(contact)
+end
+
+if modified_contacts.empty?
+  puts "no need  to upload, no changes"
+  exit
 end
 
 cli.choose do |menu|
   menu.prompt = "Do you wish to upload the changes?"
-  menu.choice(:Yes) { upload_contacts(output, contact_fixer, cli) }
+  menu.choice(:Yes) { upload_contacts(modified_contacts, contact_fixer, cli) }
   menu.choices(:No) { cli.say("Have a nice day :)") }
 end
