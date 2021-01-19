@@ -80,25 +80,26 @@ class ContactFixer
 
   def update_connections_phone_numbers(connections, substitute_pattern)
     @output.puts "No connections found" if connections.empty?
-    connections.each do |person|
-      phone_numbers = person.phone_numbers
-      unless phone_numbers.nil?
-        phone_numbers.each{|phone_number| phone_number.value.gsub!(@filter, substitute_pattern)}
+    different_connections = connections.select do |person|
+      person.phone_numbers&.any? do |phone_number|  
+        number_after_replacement = phone_number.value.gsub(@filter, substitute_pattern)
+        phone_number.value != number_after_replacement
       end
     end
+
+    res = different_connections.each do |person|
+      person.phone_numbers&.each do |phone_number|
+        phone_number.value.gsub!(@filter, substitute_pattern)
+      end
+    end
+    res
   end
 
   def get_contacts_by_phone_filter(contacts, raw_filter)
     @filter = Regexp.new raw_filter
     @output.puts "No connections found" if contacts.connections.empty?
     contacts.connections.select do |person|
-      phone_numbers = person.phone_numbers
-
-      if phone_numbers.nil?
-        false
-      else
-        phone_numbers.any? { |phone_number| phone_number.value.match(@filter) }
-      end
+      person.phone_numbers&.any? { |phone_number| phone_number.value.match(@filter) }
     end
   end
 

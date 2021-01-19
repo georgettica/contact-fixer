@@ -199,13 +199,13 @@ describe ContactFixer do
       end
     end
     context 'contact exists and has no phone numbers' do
-      it 'should return the given connections collection' do
+      it 'should return an empty result' do
         # Arrange
         @cf = ContactFixer.new(nil, @out, '')
         fake_person = instance_double('Person', :phone_numbers => [])
         connections = [fake_person]
         # Act and assert
-        expect(@cf.update_connections_phone_numbers(connections, @replacement_pattern)).to eq(connections)
+        expect(@cf.update_connections_phone_numbers(connections, @replacement_pattern)).to eq([])
       end
     end
     context 'contact exists with number and filter matches' do
@@ -213,8 +213,10 @@ describe ContactFixer do
         # Arrange
         @cf = ContactFixer.new(nil, @out, '3$')
         expected_number = "0118-999-881-999-119-725-123"
-        expect(@mock_phone_number).to receive(:value).and_return(@contact_number, expected_number)
+        expect(@mock_phone_number).to receive(:value).and_return(@contact_number)
+        expect(@mock_phone_number).to receive(:value).and_return(expected_number).exactly(2).times
         allow(@mock_phone_number).to receive(:value=).with(expected_number)
+
         fake_person = instance_double('Person', :phone_numbers => [@mock_phone_number], :names => [], :email_addresses => [])
         connections = [fake_person]
         # Act
