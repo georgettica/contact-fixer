@@ -31,8 +31,7 @@ jobs:
       run: bundle install
     - name: Run tests
       run: bundle exec rspec
-    - name: Archive code coverage results
-      uses: actions/upload-artifact@v2-preview
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v2.2.2
       with:
-        name: code-coverage-report
         path: coverage/index.html
