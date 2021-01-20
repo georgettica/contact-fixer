@@ -85,7 +85,13 @@ raw_filter = cli.ask("What filter do you want ot run?  ") { |q| q.default = "[\+
 contact_fixer = ContactFixer.new(init_service, $stdout, raw_filter)
 all_contacts = contact_fixer.get_all_contacts
 
-replacement_pattern = cli.ask("Choose replacement pattern (optional)  ") { |q| q.default = "\\0" }
+replacement_pattern = nil
+cli.choose do |menu|
+  menu.prompt = "Choose replacement pattern type:"
+  menu.choice(:Free) { replacement_pattern = cli.ask("Choose a replacement pattern") { |q| q.default = "\\0" } }
+  menu.choices(:Space) { replacement_pattern = ' '}
+  menu.choices(:Empty_string) { replacement_pattern = ''}
+end
 
 puts "\nFiltering contacts with the chosen filter.\n"
 
