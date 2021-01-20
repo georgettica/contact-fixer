@@ -106,13 +106,23 @@ describe ContactFixer do
   end  
 
   describe '.print_connections' do
+    context 'there are no connections' do
+      it 'prints the relevant message' do
+        # Arrange
+        allow(@svc).to receive_message_chain(:list_person_connections, :connections) {[]}
+        # Act
+        @cf.print_connections(@cf.get_all_contacts)
+        # Assert
+        expect(@out.string).to include(NO_CONNECTIONS_SEARCH_MESSAGE)
+      end
+    end
     context 'he has only an email address' do
       it 'prints the user with the email' do
         # Arrange
         expected_email = "a@a.com"
         mock_email = instance_double("EmailAddress")
         allow(mock_email).to receive(:value).and_return(expected_email)
-        person = instance_double("Person", :names => [], :phone_numbers => [], :email_addresses => [mock_email])
+        person = instance_double("Person", :names => nil, :phone_numbers => nil, :email_addresses => [mock_email])
         allow(@svc).to receive_message_chain(:list_person_connections, :connections) {[person]}
         # Act
         @cf.print_connections(@cf.get_all_contacts)
@@ -124,7 +134,7 @@ describe ContactFixer do
       it 'prints the user with the phone number' do
         # Arrange
         allow(@mock_phone_number).to receive(:value).and_return(CONTACT_PHONE_NUMBER)
-        person = instance_double("Person", :names => [], :phone_numbers => [@mock_phone_number], :email_addresses => [])
+        person = instance_double("Person", :names => nil, :phone_numbers => [@mock_phone_number], :email_addresses => nil)
         allow(@svc).to receive_message_chain(:list_person_connections, :connections) {[person]}
         # Act
         @cf.print_connections(@cf.get_all_contacts)
@@ -138,7 +148,7 @@ describe ContactFixer do
         expected_name = "Al Bundy"
         mock_name = instance_double("Name")
         allow(mock_name).to receive(:display_name).and_return(expected_name)
-        person = instance_double("Person", :names => [mock_name], :phone_numbers => [], :email_addresses => [])
+        person = instance_double("Person", :names => [mock_name], :phone_numbers => nil, :email_addresses => nil)
         allow(@svc).to receive_message_chain(:list_person_connections, :connections) {[person]}
         # Act
         @cf.print_connections(@cf.get_all_contacts)
@@ -151,7 +161,7 @@ describe ContactFixer do
         # Arrange
         @cf = ContactFixer.new(@svc, @out, PHONE_NUMBERS_FILTER)
         allow(@mock_phone_number).to receive(:value).and_return(CONTACT_PHONE_NUMBER)
-        person = instance_double("Person", :names => [], :phone_numbers => [@mock_phone_number], :email_addresses => [])
+        person = instance_double("Person", :names => nil, :phone_numbers => [@mock_phone_number], :email_addresses => nil)
         allow(@svc).to receive_message_chain(:list_person_connections, :connections) {[person]}
         # Act
         @cf.print_connections(@cf.get_all_contacts)
@@ -249,8 +259,7 @@ describe ContactFixer do
       it 'should return an empty result' do
         # Arrange
         @cf = ContactFixer.new(nil, @out, '')
-        fake_person = instance_double('Person', :phone_numbers => [])
-        connections = [fake_person]
+        connections = [instance_double('Person', :phone_numbers => nil)]
         # Act and assert
         expect(@cf.update_connections_phone_numbers(connections, @replacement_pattern)).to eq([])
       end
@@ -260,17 +269,12 @@ describe ContactFixer do
         # Arrange
         @cf = ContactFixer.new(nil, @out, '3$')
         expected_number = "0118-999-881-999-119-725-123"
-        expect(@mock_phone_number).to receive(:value).and_return(@contact_number)
-        expect(@mock_phone_number).to receive(:value).and_return(expected_number).exactly(2).times
-        allow(@mock_phone_number).to receive(:value=).with(expected_number)
+        expect(@mock_phone_number).to receive(:value).and_return(@contact_number).exactly(2).times
+        expect(@mock_phone_number).to receive(:value).and_return(expected_number)
 
-        fake_person = instance_double('Person', :phone_numbers => [@mock_phone_number], :names => [], :email_addresses => [])
-        connections = [fake_person]
-        # Act
-        @cf.update_connections_phone_numbers(connections, @replacement_pattern)
-        # Assert
-        @cf.print_connection(fake_person)
-        expect(@out.string).to include(expected_number)
+        connections = [instance_double('Person', :phone_numbers => [@mock_phone_number])]
+        # Act and assert
+        expect(@cf.update_connections_phone_numbers(connections, @replacement_pattern)).to eq(connections)
       end
     end
   end

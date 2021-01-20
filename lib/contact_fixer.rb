@@ -3,6 +3,8 @@ CONTACTS_NAMES_FIELD_NAME = "names"
 CONTACTS_PHONE_NUMBERS_FIELD_NAME = "phoneNumbers"
 CONTACTS_EMAIL_ADDRESSES_FIELD_NAME = "emailAddresses"
 
+NO_CONNECTIONS_SEARCH_MESSAGE = "No connections found"
+
 require 'colorize'
 
 class ContactFixer
@@ -79,7 +81,7 @@ class ContactFixer
   end
 
   def update_connections_phone_numbers(connections, substitute_pattern)
-    @output.puts "No connections found" if connections.empty?
+    @output.puts NO_CONNECTIONS_SEARCH_MESSAGE if connections.empty?
     different_connections = connections.select do |person|
       person.phone_numbers&.any? do |phone_number|  
         number_after_replacement = phone_number.value.gsub(@filter, substitute_pattern)
@@ -88,7 +90,7 @@ class ContactFixer
     end
 
     res = different_connections.each do |person|
-      person.phone_numbers&.each do |phone_number|
+      person.phone_numbers.each do |phone_number|
         phone_number.value.gsub!(@filter, substitute_pattern)
       end
     end
@@ -97,7 +99,7 @@ class ContactFixer
 
   def get_contacts_by_phone_filter(contacts, raw_filter)
     @filter = Regexp.new raw_filter
-    @output.puts "No connections found" if contacts.connections.empty?
+    @output.puts NO_CONNECTIONS_SEARCH_MESSAGE if contacts.connections.empty?
     contacts.connections.select do |person|
       person.phone_numbers&.any? { |phone_number| phone_number.value.match(@filter) }
     end
