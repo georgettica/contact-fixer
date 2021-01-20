@@ -106,14 +106,14 @@ describe ContactFixer do
   end  
 
   describe '.print_connections' do
-    context 'there no connections' do
-      it 'prints a relevant message' do
+    context 'there are no connections' do
+      it 'prints the relevant message' do
         # Arrange
         allow(@svc).to receive_message_chain(:list_person_connections, :connections) {[]}
         # Act
         @cf.print_connections(@cf.get_all_contacts)
         # Assert
-        expect(@out.string).to include("No connections found")
+        expect(@out.string).to include(NO_CONNECTIONS_SEARCH_MESSAGE)
       end
     end
     context 'he has only an email address' do
