@@ -90,7 +90,7 @@ class ContactFixer
     end
 
     res = different_connections.each do |person|
-      person.phone_numbers&.each do |phone_number|
+      person.phone_numbers.each do |phone_number|
         phone_number.value.gsub!(@filter, substitute_pattern)
       end
     end
