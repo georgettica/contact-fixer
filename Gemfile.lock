@@ -23,7 +23,7 @@ GEM
       rexml
       signet (~> 0.14)
       webrick
-    google-apis-people_v1 (0.2.0)
+    google-apis-people_v1 (0.3.0)
       google-apis-core (~> 0.1)
     googleauth (0.15.1)
       faraday (>= 0.17.3, < 2.0)
