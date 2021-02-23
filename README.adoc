@@ -20,7 +20,7 @@ to build execute the `./build.sh` script
 to run execute the `./run.sh` script.
 
 === Code
-you can run code with `ruby quickstart.rb`
+you can run code with `./quickstart.rb`
 
 === Tests
-to run tests, run `bundle exec rspec`
+to run tests, run `./test.sh`
