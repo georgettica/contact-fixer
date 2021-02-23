@@ -1,3 +1,4 @@
+#!/usr/local/bin/ruby
 # pulled from https://developers.google.com/people/quickstart/ruby
 # modified a bit to run my code and be 
 
