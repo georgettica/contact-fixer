@@ -13,6 +13,8 @@ CONTACT_PHONE_NUMBER_POSTFIX = "-shoe"
 CONTACT_PHONE_NUMBER = PHONE_NUMBERS_RAW_FILTER + CONTACT_PHONE_NUMBER_POSTFIX
 HIGHLIGHTED_PHONE_NUMBER = PHONE_NUMBERS_RAW_FILTER.green + CONTACT_PHONE_NUMBER_POSTFIX
 
+EXPECTED_EMPTY_OUTPUT_DESCRIPRTION = 'should print an empty result'
+
 describe ContactFixer do
   before(:each) do
     @svc = instance_double("PeopleServiceService")
@@ -176,7 +178,7 @@ describe ContactFixer do
       @cf = ContactFixer.new(nil, @out)
     end
     context 'no contacts exist' do
-      it 'should print an empty result' do
+      it EXPECTED_EMPTY_OUTPUT_DESCRIPRTION do
        # Arrange
        fake_connections = instance_double('Connections', :connections => [])
        # Act and assert
@@ -184,7 +186,7 @@ describe ContactFixer do
       end
     end
     context 'contact exists and has no phone numbers' do
-      it 'should print an empty result' do
+      it EXPECTED_EMPTY_OUTPUT_DESCRIPRTION do
        # Arrange
        fake_person = instance_double('Person', :phone_numbers => nil)
        fake_connections = instance_double('Connections', :connections => [fake_person])
@@ -193,7 +195,7 @@ describe ContactFixer do
       end
     end
     context 'contact exists and has empty phone number collection' do
-      it 'should print an empty result' do
+      it EXPECTED_EMPTY_OUTPUT_DESCRIPRTION do
        # Arrange
        fake_person = instance_double('Person', :phone_numbers => [])
        fake_connections = instance_double('Connections', :connections => [fake_person])
@@ -202,7 +204,7 @@ describe ContactFixer do
       end
     end
     context 'contact exists with number and filter is empty' do
-      it 'should print an empty result' do
+      it EXPECTED_EMPTY_OUTPUT_DESCRIPRTION do
        # Arrange
        allow(@mock_phone_number).to receive(:value).and_return(CONTACT_PHONE_NUMBER)
        fake_person = instance_double('Person', :phone_numbers => [@mock_phone_number])
