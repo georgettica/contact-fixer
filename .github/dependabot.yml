@@ -2,5 +2,7 @@ version: 2
 updates:
   - package-ecosystem: "bundler"
     directory: "/"
+    assignees:
+    - "georgettica"
     schedule:
       interval: "daily"
