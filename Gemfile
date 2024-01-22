@@ -5,4 +5,4 @@ gem 'simplecov', require: false, group: :test
 gem "colorize"
 gem "rspec"
 
-gem "highline", "~> 2.1"
+gem "highline", "~> 3.0"
